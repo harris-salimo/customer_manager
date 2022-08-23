@@ -20,16 +20,32 @@ import Customers from "./components/Customers";
 import Home from "./components/Home";
 import Invoices from "./components/Invoices";
 import Navbar from "./components/Navbar";
+import Login from "./components/Login";
+import jwtDecode from "jwt-decode";
+import axios from "axios";
 
 const App = () => {
+  const isUserAuthenticated = () => {
+    const token = localStorage.getItem("token");
+
+    // Check if token is expired
+    if (token && jwtDecode(token).exp * 1000 > new Date().getTime()) {
+      axios.defaults.headers["Authorization"] = "Bearer " + token;
+      return true;
+    }
+
+    return false;
+  };
+
   return (
     <HashRouter>
-      <Navbar />
+      <Navbar isUserAuthenticated={isUserAuthenticated} />
       <div className="container py-4">
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="customers" element={<Customers />} />
           <Route path="invoices" element={<Invoices />} />
+          <Route path="login" element={<Login />} />
         </Routes>
       </div>
     </HashRouter>

@@ -1,8 +1,14 @@
 import React from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { Link } from "react-router-dom";
+import axios from "axios";
 
-const Navbar = () => {
+const Navbar = ({ isUserAuthenticated }) => {
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    delete axios.defaults.headers["Authorization"];
+  };
+
   return (
     <nav
       className="navbar navbar-expand-lg navbar-light bg-light"
@@ -45,22 +51,31 @@ const Navbar = () => {
               aria-label="Search"
             />
           </form> */}
+
           <ul className="navbar-nav ml-auto">
-            <li className="nav-item">
-              <a className="nav-link" href="#">
-                Sign up
-              </a>
-            </li>
-            <li className="nav-item">
-              <a className="btn btn-primary btn-sm" href="#">
-                Sign in
-              </a>
-            </li>
-            <li className="nav-item">
-              <a className="btn btn-danger btn-sm" href="#">
-                Sign out
-              </a>
-            </li>
+            {!isUserAuthenticated() ? (
+              <>
+                <li className="nav-item">
+                  <a className="nav-link" href="#">
+                    Sign up
+                  </a>
+                </li>
+                <li className="nav-item">
+                  <Link className="btn btn-primary btn-sm" to="/login">
+                    Sign in
+                  </Link>
+                </li>
+              </>
+            ) : (
+              <li className="nav-item">
+                <button
+                  className="btn btn-danger btn-sm"
+                  onClick={() => handleLogout}
+                >
+                  Sign out
+                </button>
+              </li>
+            )}
           </ul>
         </div>
       </div>
